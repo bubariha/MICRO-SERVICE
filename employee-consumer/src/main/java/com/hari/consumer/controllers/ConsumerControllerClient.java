@@ -33,6 +33,11 @@ public class ConsumerControllerClient {
         return getEmployee();
     }
 
+    @RequestMapping(value = "/emp/using-rest-template/zuul")
+    public Object getEmpFromProducerWithZuul() {
+        return getEmployeeWithZuul();
+    }
+
     @RequestMapping(value = "/emp/using-rest-template/ribbon-load-balancer")
     public Object getEmpFromProducerWithLoadBalance() {
         return getEmployeeWithLoadBalancer();
@@ -51,6 +56,28 @@ public class ConsumerControllerClient {
         String baseUrl = serviceInstance.getUri().toString();
 
         baseUrl = baseUrl + "/employee";
+
+        RestTemplate restTemplate = new RestTemplate();
+        ResponseEntity<String> response = null;
+        try {
+            response = restTemplate.exchange(baseUrl,
+                    HttpMethod.GET, getHeaders(), String.class);
+        } catch (Exception ex) {
+            logger.warn(ex);
+        }
+        logger.warn(response.getBody());
+        return response.getBody();
+    }
+
+    public Object getEmployeeWithZuul() {
+        logger.warn("Harry");
+        List<ServiceInstance> instances = discoveryClient.getInstances("zuul-service");
+        ServiceInstance serviceInstance = instances.get(0);
+
+        logger.warn("Harry serviceInstance with zuul "+serviceInstance);
+        String baseUrl = serviceInstance.getUri().toString();
+        logger.warn("Harry baseUrl with zuul "+baseUrl);
+        baseUrl = baseUrl + "/employee-producer/employee";
 
         RestTemplate restTemplate = new RestTemplate();
         ResponseEntity<String> response = null;

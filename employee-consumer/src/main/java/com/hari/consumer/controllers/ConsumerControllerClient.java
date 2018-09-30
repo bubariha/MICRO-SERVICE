@@ -1,5 +1,6 @@
 package com.hari.consumer.controllers;
 
+import com.hari.consumer.clients.EmployeeFeignClient;
 import org.jboss.logging.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.client.ServiceInstance;
@@ -15,6 +16,9 @@ import java.util.List;
 
 @RestController
 public class ConsumerControllerClient {
+
+    @Autowired
+    EmployeeFeignClient employeeFeignClient;
 
     Logger logger = Logger.getLogger(ConsumerControllerClient.class);
 
@@ -32,6 +36,11 @@ public class ConsumerControllerClient {
     @RequestMapping(value = "/emp/using-rest-template/ribbon-load-balancer")
     public Object getEmpFromProducerWithLoadBalance() {
         return getEmployeeWithLoadBalancer();
+    }
+
+    @RequestMapping(value = "/emp/using-feign/ribbon-load-balancer")
+    public Object getEmpFromProducerWithFeignClient() {
+        return getEmployeeWithFeign();
     }
 
     public Object getEmployee() {
@@ -89,6 +98,12 @@ public class ConsumerControllerClient {
         }
         logger.warn(response.getBody());
         return response.getBody();
+    }
+
+    public Object getEmployeeWithFeign() {
+
+        return employeeFeignClient.getEmpFromProducer();
+
     }
 
 }

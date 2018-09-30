@@ -1,5 +1,9 @@
 # Compiled class file
 *.class
+# Intellij Idea project Files
+root/
+out/
+.idea/
 
 # Log file
 *.log

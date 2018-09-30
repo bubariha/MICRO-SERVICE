@@ -11,6 +11,7 @@
     <modules>
         <module>eureka-service</module>
         <module>employee-producer</module>
+        <module>employee-consumer</module>
     </modules>
 
     <name>micro-service</name>

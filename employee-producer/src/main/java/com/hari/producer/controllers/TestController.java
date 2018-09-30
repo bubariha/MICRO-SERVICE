@@ -2,6 +2,7 @@ package com.hari.producer.controllers;
 
 import com.hari.producer.model.Employee;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
+import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import org.jboss.logging.Logger;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -25,7 +26,9 @@ public class TestController {
         return emp;
     }
 
-    @HystrixCommand(fallbackMethod = "getDataFallBack")
+    @HystrixCommand(commandProperties = {@HystrixProperty(
+            name = "execution.isolation.thread.timeoutInMilliseconds",
+            value = "500")}, fallbackMethod = "getDataFallBack")
     @RequestMapping(value = "/employee/{name}", method = RequestMethod.GET)
     public Employee dynamicEmployee(@PathVariable(name = "name") String name) {
 
@@ -33,6 +36,13 @@ public class TestController {
 
         if (name.equals("hari")) {
             throw new RuntimeException();
+        }
+        if (name.equals("babu")) {
+            try {
+                Thread.sleep(5000L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
         Employee emp = new Employee();
         emp.setName(name);
